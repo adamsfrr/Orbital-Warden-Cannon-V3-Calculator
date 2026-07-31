@@ -1,322 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orbital Warden Cannon V3 - Fire Control Calculator</title>
-  <style>
-    :root {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --accent: #ff5555;
-      --accent-hover: #ff6e6e;
-      --text: #e0e0e0;
-      --text-muted: #888888;
-      --border: #2d2d2d;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNIDIRECTIONAL WARDEN CALC — V3</title>
+    <style>
+        :root {
+            --bg-main: #0f1115;
+            --bg-card: #181b21;
+            --bg-input: #22262e;
+            --accent-cyan: #00f0ff;
+            --accent-green: #00ff88;
+            --accent-orange: #ff9d00;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border: #2d3440;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text);
-      padding: 2rem 1rem;
-      display: flex;
-      justify-content: center;
-    }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    .container {
-      max-width: 800px;
-      width: 100%;
-    }
+        .calculator-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 540px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
 
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-      color: #ffffff;
-    }
+        .header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
 
-    p.subtitle {
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-      font-size: 0.95rem;
-    }
+        .header h1 {
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+        }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
+        .header p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
 
-    @media (max-width: 600px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
+        .input-group {
+            margin-bottom: 18px;
+        }
 
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-    }
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
 
-    .card h2 {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      color: #ffffff;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
 
-    .input-group {
-      margin-bottom: 1rem;
-    }
+        input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: border-color 0.2s;
+        }
 
-    .input-group:last-child {
-      margin-bottom: 0;
-    }
+        input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
 
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 0.3rem;
-    }
+        .origin-toggle {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 12px;
+            user-select: none;
+        }
 
-    input[type="number"] {
-      width: 100%;
-      padding: 0.6rem;
-      background-color: #2a2a2a;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: #ffffff;
-      font-size: 1rem;
-    }
+        .origin-inputs {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            border: 1px dashed var(--border);
+        }
 
-    input[type="number"]:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
+        .origin-inputs.show {
+            display: block;
+        }
 
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.95rem;
-    }
+        .results-card {
+            margin-top: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
 
-    .stat-row:last-child {
-      border-bottom: none;
-    }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 0, 0.05);
+        }
 
-    .stat-label {
-      color: var(--text-muted);
-    }
+        .result-row:last-child {
+            border-bottom: none;
+        }
 
-    .stat-value {
-      font-weight: bold;
-      color: #ffffff;
-    }
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
 
-    .stat-value.highlight {
-      color: var(--accent);
-    }
+        .result-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            font-family: monospace;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
+        .pulse-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
 
-    th, td {
-      padding: 0.75rem;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-    }
+        .pulse-card {
+            background: var(--bg-input);
+            padding: 14px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 3px solid var(--accent-cyan);
+        }
 
-    th {
-      background-color: #252525;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+        .pulse-card.z-axis {
+            border-left-color: var(--accent-orange);
+        }
 
-    td {
-      font-size: 1rem;
-      font-weight: 500;
-    }
+        .pulse-card span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
 
-    .lectern-col {
-      text-align: left;
-      font-weight: bold;
-      color: #ffffff;
-    }
-  </style>
+        .pulse-card strong {
+            font-size: 1.6rem;
+            color: #fff;
+            font-family: monospace;
+        }
+
+        .sim-section {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sim-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .sim-data {
+            font-size: 0.95rem;
+            font-family: monospace;
+            color: #fff;
+        }
+
+        .sim-error {
+            font-size: 0.8rem;
+            color: var(--accent-orange);
+            margin-top: 4px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Orbital Warden Cannon V3</h1>
-    <p class="subtitle">Fire Control Calculator &bull; Drift Compensation &bull; Lectern Modulo Settings</p>
 
-    <div class="grid">
-      <!-- Coordinates Input -->
-      <div class="card">
-        <h2>Coordinate Inputs</h2>
-        <div class="input-group">
-          <label for="originX">Origin X</label>
-          <input type="number" id="originX" value="1503">
-        </div>
-        <div class="input-group">
-          <label for="originZ">Origin Z</label>
-          <input type="number" id="originZ" value="1503">
-        </div>
-        <div class="input-group">
-          <label for="targetX">Target X</label>
-          <input type="number" id="targetX" value="1328">
-        </div>
-        <div class="input-group">
-          <label for="targetZ">Target Z</label>
-          <input type="number" id="targetZ" value="1680">
-        </div>
-      </div>
-
-      <!-- Breakdown Stats -->
-      <div class="card">
-        <h2>Pulse Breakdown</h2>
-        <div class="stat-row">
-          <span class="stat-label">Delta X / Z</span>
-          <span class="stat-value"><span id="deltaX">0</span> , <span id="deltaZ">0</span></span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Primary X Pulses</span>
-          <span class="stat-value" id="primaryX">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Primary Z Pulses</span>
-          <span class="stat-value" id="primaryZ">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Drift X Pulses (+0.085 Z)</span>
-          <span class="stat-value" id="driftX">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Drift Z Pulses (+0.085 X)</span>
-          <span class="stat-value" id="driftZ">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Total X Pulses</span>
-          <span class="stat-value highlight" id="totalX">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Total Z Pulses</span>
-          <span class="stat-value highlight" id="totalZ">0</span>
-        </div>
-      </div>
+<div class="calculator-container">
+    <div class="header">
+        <h1>Omnidirectional Warden Calc</h1>
+        <p>Warden Cannon V3 — 2-Point Calibration Matrix</p>
     </div>
 
-    <!-- Lectern Outputs -->
-    <div class="card">
-      <h2>Lectern Redstone Settings</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Lectern</th>
-            <th>X Setting</th>
-            <th>Z Setting</th>
-          </tr>
-        </thead>
-        <tbody id="lecternTable">
-          <!-- Populated by JavaScript -->
-        </tbody>
-      </table>
+    <div class="input-group">
+        <div class="input-row">
+            <div>
+                <label for="targetX">Target X</label>
+                <input type="number" id="targetX" value="2500" step="any">
+            </div>
+            <div>
+                <label for="targetZ">Target Z</label>
+                <input type="number" id="targetZ" value="2000" step="any">
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const VELOCITY_X = 2.91;
-    const VELOCITY_Z = 2.50;
-    const DRIFT_COEFF = 0.085;
+    <span class="origin-toggle" onclick="toggleOrigin()">⚙️ Toggle Launch Origin</span>
+    <div class="origin-inputs" id="originBox">
+        <div class="input-row">
+            <div>
+                <label for="originX">Origin X</label>
+                <input type="number" id="originX" value="1503" step="any">
+            </div>
+            <div>
+                <label for="originZ">Origin Z</label>
+                <input type="number" id="originZ" value="1503" step="any">
+            </div>
+        </div>
+    </div>
 
-    const lecterns = [
-      { name: "L6 (100k)", div: 100000 },
-      { name: "L5 (10k)", div: 10000 },
-      { name: "L4 (1k)", div: 1000 },
-      { name: "L3 (100s)", div: 100 },
-      { name: "L2 (10s)", div: 10 },
-      { name: "L1 (1s)", div: 1 }
-    ];
+    <div class="results-card">
+        <div class="pulse-box">
+            <div class="pulse-card">
+                <span>X Lectern Pulses</span>
+                <strong id="outPx">0</strong>
+            </div>
+            <div class="pulse-card z-axis">
+                <span>Z Lectern Pulses</span>
+                <strong id="outPz">0</strong>
+            </div>
+        </div>
 
-    function calculate() {
-      const originX = parseFloat(document.getElementById('originX').value) || 0;
-      const originZ = parseFloat(document.getElementById('originZ').value) || 0;
-      const targetX = parseFloat(document.getElementById('targetX').value) || 0;
-      const targetZ = parseFloat(document.getElementById('targetZ').value) || 0;
+        <div class="result-row">
+            <span class="result-label">Firing Timer (3 pulses/s)</span>
+            <span class="result-value" id="outTimer">0 ticks (0.0s)</span>
+        </div>
 
-      const deltaX = targetX - originX;
-      const deltaZ = targetZ - originZ;
+        <div class="sim-section">
+            <div class="sim-title">Impact Simulator (After Rounding & +1 Ghost Pulse)</div>
+            <div class="sim-data" id="simCoords">Est. Landing: [0.0, 0.0]</div>
+            <div class="sim-error" id="simError">Drift Error: 0.00 blocks</div>
+        </div>
+    </div>
+</div>
 
-      // Primary Pulses (-1 block ghost pulse adjustment)
-      const posX = deltaX > 0 ? Math.max(0, Math.round((deltaX - 1) / VELOCITY_X)) : 0;
-      const negX = deltaX < 0 ? Math.max(0, Math.round((-deltaX - 1) / VELOCITY_X)) : 0;
-      const posZ = deltaZ > 0 ? Math.max(0, Math.round((deltaZ - 1) / VELOCITY_Z)) : 0;
-      const negZ = deltaZ < 0 ? Math.max(0, Math.round((-deltaZ - 1) / VELOCITY_Z)) : 0;
+<script>
+    // 2-Point Matrix Constants (Derived from [576, 261] and [284, 488])
+    // Forward coefficients (Pulses -> Blocks)
+    const C_XX = 2.66474;
+    const C_XZ = -0.87900;
+    const C_ZX = -0.71795;
+    const C_ZZ = 2.14195;
 
-      const primaryX = posX + negX;
-      const primaryZ = posZ + negZ;
+    // Invert Matrix Coefficients (Blocks -> Pulses)
+    const I_XX = 0.4219219;
+    const I_XZ = 0.1731456;
+    const I_ZX = 0.1414219;
+    const I_ZZ = 0.5249012;
 
-      // Opposing Cross-Axis Drift Correction
-      const driftX = primaryZ > 0 ? Math.round(primaryZ * DRIFT_COEFF) : 0;
-      const driftZ = primaryX > 0 ? Math.round(primaryX * DRIFT_COEFF) : 0;
+    const inputs = ['targetX', 'targetZ', 'originX', 'originZ'];
+    inputs.forEach(id => document.getElementById(id).addEventListener('input', calculate));
 
-      // Totals
-      const totalX = primaryX + driftX;
-      const totalZ = primaryZ + driftZ;
-
-      // Update Breakdown DOM
-      document.getElementById('deltaX').textContent = deltaX;
-      document.getElementById('deltaZ').textContent = deltaZ;
-      document.getElementById('primaryX').textContent = primaryX;
-      document.getElementById('primaryZ').textContent = primaryZ;
-      document.getElementById('driftX').textContent = driftX;
-      document.getElementById('driftZ').textContent = driftZ;
-      document.getElementById('totalX').textContent = totalX;
-      document.getElementById('totalZ').textContent = totalZ;
-
-      // Generate Lectern Table
-      const tableBody = document.getElementById('lecternTable');
-      tableBody.innerHTML = '';
-
-      lecterns.forEach(l => {
-        const xSetting = Math.floor(totalX / l.div) % 10;
-        const zSetting = Math.floor(totalZ / l.div) % 10;
-
-        const row = `
-          <tr>
-            <td class="lectern-col">${l.name}</td>
-            <td>${xSetting}</td>
-            <td>${zSetting}</td>
-          </tr>
-        `;
-        tableBody.insertAdjacentHTML('beforeend', row);
-      });
+    function toggleOrigin() {
+        document.getElementById('originBox').classList.toggle('show');
     }
 
-    // Attach event listeners for real-time recalculation
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-      input.addEventListener('input', calculate);
-    });
+    function calculate() {
+        const tX = parseFloat(document.getElementById('targetX').value) || 0;
+        const tZ = parseFloat(document.getElementById('targetZ').value) || 0;
+        const oX = parseFloat(document.getElementById('originX').value) || 0;
+        const oZ = parseFloat(document.getElementById('originZ').value) || 0;
 
-    // Initial Calculation on page load
+        // 1. Calculate displacement from origin
+        const dx = tX - oX;
+        const dz = tZ - oZ;
+
+        // 2. Solve for effective pulses required (including +1 ghost pulse)
+        const effX = (I_XX * dx) + (I_XZ * dz);
+        const effZ = (I_ZX * dx) + (I_ZZ * dz);
+
+        // 3. Subtract 1 for the ghost pulse and round to integer lectern pages
+        const pX = Math.max(0, Math.round(effX) - 1);
+        const pZ = Math.max(0, Math.round(effZ) - 1);
+
+        document.getElementById('outPx').innerText = pX;
+        document.getElementById('outPz').innerText = pZ;
+
+        // 4. Timer Calculation (3 pulses per second = 6.667 ticks per unit)
+        const totalPulses = pX + pZ;
+        const durationTicks = Math.floor(totalPulses * (20 / 3));
+        const durationSec = (totalPulses / 3).toFixed(1);
+        document.getElementById('outTimer').innerText = `${durationTicks} ticks (${durationSec}s)`;
+
+        // 5. Impact Simulator (Forward calculation using integer pulses + 1 ghost pulse)
+        const simDx = C_XX * (pX + 1) + C_XZ * (pZ + 1);
+        const simDz = C_ZX * (pX + 1) + C_ZZ * (pZ + 1);
+        const landX = oX + simDx;
+        const landZ = oZ + simDz;
+
+        // Calculate landing error distance
+        const errX = tX - landX;
+        const errZ = tZ - landZ;
+        const totalErr = Math.sqrt(errX * errX + errZ * errZ);
+
+        document.getElementById('simCoords').innerText = 
+            `Est. Landing: [${landX.toFixed(1)}, ${landZ.toFixed(1)}]`;
+        document.getElementById('simError').innerText = 
+            `Rounding Drift Error: ±${totalErr.toFixed(2)} blocks`;
+    }
+
+    // Run initial calculation on page load
     calculate();
-  </script>
+</script>
 </body>
 </html>
