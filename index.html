@@ -148,8 +148,8 @@
         padding: 15px;
         border-radius: 12px;
         text-align: center;
-        font-size: 28px;
-        letter-spacing: 2px;
+        font-size: 24px;
+        letter-spacing: 1px;
     }
 
     @media (max-width: 600px) {
@@ -228,15 +228,30 @@
             </div>
         </div>
 
-        <div>
-            <label style="text-align: center; margin-bottom: 12px;">Predicted Landing Spot</label>
-            <div class="good" id="landing">[0, 0]</div>
+        <div class="grid">
+            <div>
+                <label style="text-align: center; margin-bottom: 12px;">Predicted Landing</label>
+                <div class="good" id="landing">[0, 0]</div>
+            </div>
+            <div>
+                <label style="text-align: center; margin-bottom: 12px;">Est. Time</label>
+                <div class="good" id="eta">0s</div>
+            </div>
         </div>
     </div>
 
 </div>
 
 <script>
+
+/*
+===========================================================
+TIMING CONSTANTS
+===========================================================
+*/
+const PULSES_PER_SECOND = 3.5; // Average of "3 or 4"
+const SECONDS_PER_PULSE = 1 / PULSES_PER_SECOND;
+const BASE_FLIGHT_SECONDS = 10; // Estimated air-time of the warden
 
 /*
 ===========================================================
@@ -346,6 +361,7 @@ function calculate() {
         document.getElementById("xPulses").textContent = "ERR";
         document.getElementById("zPulses").textContent = "ERR";
         document.getElementById("landing").textContent = "[ERROR]";
+        document.getElementById("eta").textContent = "ERR";
         return;
     }
 
@@ -365,6 +381,21 @@ function calculate() {
 
     document.getElementById("landing").textContent = 
         `[${landingX.toFixed(1)}, ${landingZ.toFixed(1)}]`;
+
+    // ESTIMATED TIME CALCULATION
+    const maxPulses = Math.max(finalX, finalZ);
+    const dispenseTime = maxPulses * SECONDS_PER_PULSE;
+    const totalTime = dispenseTime + BASE_FLIGHT_SECONDS;
+
+    // Format into minutes and seconds
+    const minutes = Math.floor(totalTime / 60);
+    const seconds = (totalTime % 60).toFixed(1);
+    
+    if (minutes > 0) {
+        document.getElementById("eta").textContent = `~${minutes}m ${seconds}s`;
+    } else {
+        document.getElementById("eta").textContent = `~${seconds}s`;
+    }
 }
 
 /*
