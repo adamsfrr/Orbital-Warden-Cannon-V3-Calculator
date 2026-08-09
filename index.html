@@ -1,344 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMNIDIRECTIONAL WARDEN CALC — V3</title>
-    <style>
-        :root {
-            --bg-main: #0f1115;
-            --bg-card: #181b21;
-            --bg-input: #22262e;
-            --accent-cyan: #00f0ff;
-            --accent-green: #00ff88;
-            --accent-orange: #ff9d00;
-            --text-main: #e2e8f0;
-            --text-dim: #94a3b8;
-            --border: #2d3440;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbital Warden Cannon V3 Calculator</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: #ff4d4d;
+        color: #000;
+        font-family: 'Comic Sans MS', 'Fredoka One', 'Chalkboard SE', 'Comic Neue', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 15px;
+    }
 
-        .calculator-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 540px;
-            padding: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
+    .calculator {
+        width: 100%;
+        max-width: 600px;
+    }
 
-        .header {
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 16px;
-        }
+    h1 {
+        margin-bottom: 8px;
+        color: #ffffff;
+        text-align: center;
+        font-size: 2.4rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-shadow: 
+            3px 3px 0 #000, 
+            -1px -1px 0 #000, 
+            1px -1px 0 #000, 
+            -1px 1px 0 #000, 
+            1px 1px 0 #000;
+    }
 
-        .header h1 {
-            font-size: 1.3rem;
-            letter-spacing: 2px;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-        }
+    .subtitle {
+        color: #ffffff;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 35px;
+        font-size: 1.3rem;
+        text-shadow: 2px 2px 0 #000;
+    }
 
-        .header p {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
+    .card {
+        background: #ffffff;
+        border: 4px solid #000;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 8px 8px 0px #000;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-        .input-group {
-            margin-bottom: 18px;
-        }
+    .card:hover {
+        transform: translateY(-4px) translateX(-4px);
+        box-shadow: 12px 12px 0px #000;
+    }
 
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 4px dashed #ff4d4d;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    }
 
-        label {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-        }
+    .card h2 {
+        margin: 0;
+        color: #ff4d4d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 0px #000;
+        font-size: 1.6rem;
+    }
 
-        input {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 12px;
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: border-color 0.2s;
-        }
+    .quadrant-badge {
+        background: #ffb3b3;
+        color: #000;
+        border: 3px solid #000;
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 900;
+        box-shadow: 2px 2px 0px #000;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-        }
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
 
-        .origin-toggle {
-            font-size: 0.8rem;
-            color: var(--accent-cyan);
-            cursor: pointer;
-            display: inline-block;
-            margin-bottom: 12px;
-            user-select: none;
-        }
+    label {
+        display: block;
+        color: #000;
+        font-weight: 900;
+        margin-bottom: 8px;
+        font-size: 16px;
+        text-transform: uppercase;
+    }
 
-        .origin-inputs {
-            display: none;
-            margin-bottom: 18px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            border: 1px dashed var(--border);
-        }
+    input {
+        width: 100%;
+        padding: 14px;
+        background: #fff;
+        color: #000;
+        border: 3px solid #000;
+        border-radius: 12px;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: inherit;
+        box-shadow: 4px 4px 0px #ff4d4d;
+        transition: all 0.1s ease;
+        text-align: center;
+    }
 
-        .origin-inputs.show {
-            display: block;
-        }
+    input:focus {
+        outline: none;
+        transform: translateY(2px) translateX(2px);
+        box-shadow: 2px 2px 0px #ff4d4d;
+    }
 
-        .results-card {
-            margin-top: 24px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-        }
+    .result {
+        font-size: 42px;
+        font-weight: 900;
+        color: #ff4d4d;
+        text-shadow: 2px 2px 0px #000;
+        text-align: center;
+    }
 
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 0, 0.05);
-        }
+    .good {
+        color: #ffffff;
+        background: #ff4d4d;
+        text-shadow: 2px 2px 0px #000;
+        box-shadow: 4px 4px 0px #000;
+        border: 3px solid #000;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 28px;
+        letter-spacing: 2px;
+    }
 
-        .result-row:last-child {
-            border-bottom: none;
+    @media (max-width: 600px) {
+        .grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
-
-        .result-label {
-            font-size: 0.9rem;
-            color: var(--text-dim);
+        .card-header {
+            flex-direction: column;
+            gap: 10px;
         }
-
-        .result-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--accent-green);
-            font-family: monospace;
+        h1 {
+            font-size: 1.8rem;
         }
-
-        .pulse-box {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .pulse-card {
-            background: var(--bg-input);
-            padding: 14px;
-            border-radius: 6px;
-            text-align: center;
-            border-left: 3px solid var(--accent-cyan);
-        }
-
-        .pulse-card.z-axis {
-            border-left-color: var(--accent-orange);
-        }
-
-        .pulse-card span {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        .pulse-card strong {
-            font-size: 1.6rem;
-            color: #fff;
-            font-family: monospace;
-        }
-
-        .sim-section {
-            margin-top: 18px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-        }
-
-        .sim-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-        }
-
-        .sim-data {
-            font-size: 0.95rem;
-            font-family: monospace;
-            color: #fff;
-        }
-
-        .sim-error {
-            font-size: 0.8rem;
-            color: var(--accent-orange);
-            margin-top: 4px;
-        }
-    </style>
+    }
+</style>
 </head>
+
 <body>
 
-<div class="calculator-container">
-    <div class="header">
-        <h1>Omnidirectional Warden Calc</h1>
-        <p>Warden Cannon V3 — 2-Point Calibration Matrix</p>
+<div class="calculator">
+
+    <h1>Orbital Warden Cannon V3 Calculator</h1>
+
+    <div class="subtitle">
+        for your warden cannon needs
     </div>
 
-    <div class="input-group">
-        <div class="input-row">
+    <!-- =========================================================
+         COORDINATES
+         ========================================================= -->
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Coordinates</h2>
+        </div>
+
+        <div class="grid">
             <div>
-                <label for="targetX">Target X</label>
-                <input type="number" id="targetX" value="2500" step="any">
+                <label>Origin X</label>
+                <input id="originX" type="number" value="5999">
             </div>
             <div>
-                <label for="targetZ">Target Z</label>
-                <input type="number" id="targetZ" value="2000" step="any">
+                <label>Origin Z</label>
+                <input id="originZ" type="number" value="5999">
+            </div>
+            <div>
+                <label>Target X</label>
+                <input id="targetX" type="number" value="7000">
+            </div>
+            <div>
+                <label>Target Z</label>
+                <input id="targetZ" type="number" value="7000">
             </div>
         </div>
     </div>
 
-    <span class="origin-toggle" onclick="toggleOrigin()">⚙️ Toggle Launch Origin</span>
-    <div class="origin-inputs" id="originBox">
-        <div class="input-row">
+    <!-- =========================================================
+         SETTINGS: PULSES & LANDING
+         ========================================================= -->
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Settings</h2>
+            <div class="quadrant-badge" id="quadrantBadge">AUTO</div>
+        </div>
+
+        <div class="grid" style="margin-bottom: 25px;">
             <div>
-                <label for="originX">Origin X</label>
-                <input type="number" id="originX" value="1503" step="any">
+                <label style="text-align: center;">X Pulses</label>
+                <div class="result" id="xPulses">—</div>
             </div>
             <div>
-                <label for="originZ">Origin Z</label>
-                <input type="number" id="originZ" value="1503" step="any">
+                <label style="text-align: center;">Z Pulses</label>
+                <div class="result" id="zPulses">—</div>
             </div>
+        </div>
+
+        <div>
+            <label style="text-align: center; margin-bottom: 12px;">Predicted Landing Spot</label>
+            <div class="good" id="landing">[0, 0]</div>
         </div>
     </div>
 
-    <div class="results-card">
-        <div class="pulse-box">
-            <div class="pulse-card">
-                <span>X Lectern Pulses</span>
-                <strong id="outPx">0</strong>
-            </div>
-            <div class="pulse-card z-axis">
-                <span>Z Lectern Pulses</span>
-                <strong id="outPz">0</strong>
-            </div>
-        </div>
-
-        <div class="result-row">
-            <span class="result-label">Firing Timer (3 pulses/s)</span>
-            <span class="result-value" id="outTimer">0 ticks (0.0s)</span>
-        </div>
-
-        <div class="sim-section">
-            <div class="sim-title">Impact Simulator (After Rounding & +1 Ghost Pulse)</div>
-            <div class="sim-data" id="simCoords">Est. Landing: [0.0, 0.0]</div>
-            <div class="sim-error" id="simError">Drift Error: 0.00 blocks</div>
-        </div>
-    </div>
 </div>
 
 <script>
-    // 2-Point Matrix Constants (Derived from [576, 261] and [284, 488])
-    // Forward coefficients (Pulses -> Blocks)
-    const C_XX = 2.66474;
-    const C_XZ = -0.87900;
-    const C_ZX = -0.71795;
-    const C_ZZ = 2.14195;
 
-    // Invert Matrix Coefficients (Blocks -> Pulses)
-    const I_XX = 0.4219219;
-    const I_XZ = 0.1731456;
-    const I_ZX = 0.1414219;
-    const I_ZZ = 0.5249012;
+/*
+===========================================================
+RAW MOTION PER 2 PULSES
+===========================================================
+*/
+const RAW_VECTORS = {
+    posX: { x:  3.689 / 2, z: -1.1495 / 2 },
+    posZ: { x: -1.270 / 2, z:  3.997 / 2 },
+    negX: { x: -4.831 / 2, z: -0.011 / 2 },
+    negZ: { x: -0.011 / 2, z: -4.831 / 2 }
+};
 
-    const inputs = ['targetX', 'targetZ', 'originX', 'originZ'];
-    inputs.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+/*
+===========================================================
+CALIBRATION CONSTANTS
+===========================================================
+*/
+const PP_CALIBRATION = { xPulse: 0.9806, zPulse: 0.8276 };
+const PN_CALIBRATION = { xPulse: 0.9771, zPulse: 0.9121 };
+const NP_CALIBRATION = { xPulse: 0.8949, zPulse: 0.8357 };
+const NN_CALIBRATION = { xPulse: 0.9019, zPulse: 0.8976 };
 
-    function toggleOrigin() {
-        document.getElementById('originBox').classList.toggle('show');
+/*
+===========================================================
+BUILD QUADRANT MATRIX
+===========================================================
+*/
+function getMatrix(quadrant) {
+    let xVector, zVector;
+
+    switch (quadrant) {
+        case "pp":
+            xVector = { x: RAW_VECTORS.posX.x * PP_CALIBRATION.xPulse, z: RAW_VECTORS.posX.z * PP_CALIBRATION.xPulse };
+            zVector = { x: RAW_VECTORS.posZ.x * PP_CALIBRATION.zPulse, z: RAW_VECTORS.posZ.z * PP_CALIBRATION.zPulse };
+            break;
+        case "pn":
+            xVector = { x: RAW_VECTORS.posX.x * PN_CALIBRATION.xPulse, z: RAW_VECTORS.posX.z * PN_CALIBRATION.xPulse };
+            zVector = { x: RAW_VECTORS.negZ.x * PN_CALIBRATION.zPulse, z: RAW_VECTORS.negZ.z * PN_CALIBRATION.zPulse };
+            break;
+        case "np":
+            xVector = { x: RAW_VECTORS.negX.x * NP_CALIBRATION.xPulse, z: RAW_VECTORS.negX.z * NP_CALIBRATION.xPulse };
+            zVector = { x: RAW_VECTORS.posZ.x * NP_CALIBRATION.zPulse, z: RAW_VECTORS.posZ.z * NP_CALIBRATION.zPulse };
+            break;
+        case "nn":
+            xVector = { x: RAW_VECTORS.negX.x * NN_CALIBRATION.xPulse, z: RAW_VECTORS.negX.z * NN_CALIBRATION.xPulse };
+            zVector = { x: RAW_VECTORS.negZ.x * NN_CALIBRATION.zPulse, z: RAW_VECTORS.negZ.z * NN_CALIBRATION.zPulse };
+            break;
     }
 
-    function calculate() {
-        const tX = parseFloat(document.getElementById('targetX').value) || 0;
-        const tZ = parseFloat(document.getElementById('targetZ').value) || 0;
-        const oX = parseFloat(document.getElementById('originX').value) || 0;
-        const oZ = parseFloat(document.getElementById('originZ').value) || 0;
+    return { a: xVector.x, b: zVector.x, c: xVector.z, d: zVector.z };
+}
 
-        // 1. Calculate displacement from origin
-        const dx = tX - oX;
-        const dz = tZ - oZ;
+/*
+===========================================================
+2x2 MATRIX SOLVER
+===========================================================
+*/
+function solveMatrix(a, b, c, d, deltaX, deltaZ) {
+    const determinant = (a * d) - (b * c);
+    if (Math.abs(determinant) < 1e-12) return null;
 
-        // 2. Solve for effective pulses required (including +1 ghost pulse)
-        const effX = (I_XX * dx) + (I_XZ * dz);
-        const effZ = (I_ZX * dx) + (I_ZZ * dz);
+    const xPulses = ((deltaX * d) - (b * deltaZ)) / determinant;
+    const zPulses = ((a * deltaZ) - (deltaX * c)) / determinant;
 
-        // 3. Subtract 1 for the ghost pulse and round to integer lectern pages
-        const pX = Math.max(0, Math.round(effX) - 1);
-        const pZ = Math.max(0, Math.round(effZ) - 1);
+    return { x: xPulses, z: zPulses };
+}
 
-        document.getElementById('outPx').innerText = pX;
-        document.getElementById('outPz').innerText = pZ;
+/*
+===========================================================
+CALCULATE
+===========================================================
+*/
+function calculate() {
+    const originX = parseFloat(document.getElementById("originX").value) || 0;
+    const originZ = parseFloat(document.getElementById("originZ").value) || 0;
+    const targetX = parseFloat(document.getElementById("targetX").value) || 0;
+    const targetZ = parseFloat(document.getElementById("targetZ").value) || 0;
 
-        // 4. Timer Calculation (3 pulses per second = 6.667 ticks per unit)
-        const totalPulses = pX + pZ;
-        const durationTicks = Math.floor(totalPulses * (20 / 3));
-        const durationSec = (totalPulses / 3).toFixed(1);
-        document.getElementById('outTimer').innerText = `${durationTicks} ticks (${durationSec}s)`;
+    const deltaX = targetX - originX;
+    const deltaZ = targetZ - originZ;
 
-        // 5. Impact Simulator (Forward calculation using integer pulses + 1 ghost pulse)
-        const simDx = C_XX * (pX + 1) + C_XZ * (pZ + 1);
-        const simDz = C_ZX * (pX + 1) + C_ZZ * (pZ + 1);
-        const landX = oX + simDx;
-        const landZ = oZ + simDz;
+    // AUTO-DETECT QUADRANT
+    let quadrant = "pp";
+    let badgeText = "PP (+X / +Z)";
 
-        // Calculate landing error distance
-        const errX = tX - landX;
-        const errZ = tZ - landZ;
-        const totalErr = Math.sqrt(errX * errX + errZ * errZ);
-
-        document.getElementById('simCoords').innerText = 
-            `Est. Landing: [${landX.toFixed(1)}, ${landZ.toFixed(1)}]`;
-        document.getElementById('simError').innerText = 
-            `Rounding Drift Error: ±${totalErr.toFixed(2)} blocks`;
+    if (deltaX >= 0 && deltaZ >= 0) {
+        quadrant = "pp";
+        badgeText = "PP (+X / +Z)";
+    } else if (deltaX >= 0 && deltaZ < 0) {
+        quadrant = "pn";
+        badgeText = "PN (+X / -Z)";
+    } else if (deltaX < 0 && deltaZ >= 0) {
+        quadrant = "np";
+        badgeText = "NP (-X / +Z)";
+    } else if (deltaX < 0 && deltaZ < 0) {
+        quadrant = "nn";
+        badgeText = "NN (-X / -Z)";
     }
 
-    // Run initial calculation on page load
-    calculate();
+    document.getElementById("quadrantBadge").textContent = badgeText;
+
+    const matrix = getMatrix(quadrant);
+    const solution = solveMatrix(matrix.a, matrix.b, matrix.c, matrix.d, deltaX, deltaZ);
+
+    if (!solution) {
+        document.getElementById("xPulses").textContent = "ERR";
+        document.getElementById("zPulses").textContent = "ERR";
+        document.getElementById("landing").textContent = "[ERROR]";
+        return;
+    }
+
+    // ROUND UP PULSES (FORCE POSITIVE)
+    const finalX = Math.ceil(Math.abs(solution.x));
+    const finalZ = Math.ceil(Math.abs(solution.z));
+
+    document.getElementById("xPulses").textContent = finalX;
+    document.getElementById("zPulses").textContent = finalZ;
+
+    // PREDICTED LANDING
+    const predictedX = (matrix.a * solution.x) + (matrix.b * solution.z);
+    const predictedZ = (matrix.c * solution.x) + (matrix.d * solution.z);
+    
+    const landingX = originX + predictedX;
+    const landingZ = originZ + predictedZ;
+
+    document.getElementById("landing").textContent = 
+        `[${landingX.toFixed(1)}, ${landingZ.toFixed(1)}]`;
+}
+
+/*
+===========================================================
+LIVE UPDATES
+===========================================================
+*/
+["originX", "originZ", "targetX", "targetZ"].forEach(id => {
+    document.getElementById(id).addEventListener("input", calculate);
+});
+
+/*
+===========================================================
+INITIAL CALCULATION
+===========================================================
+*/
+calculate();
+
 </script>
+
 </body>
 </html>
